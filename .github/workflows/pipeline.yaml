@@ -1,0 +1,63 @@
+name: azure-resources
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+    inputs:
+      REPO_NAME:
+        type: string
+        default: azuregitops_1
+        required: true
+        description: Repo to be created
+      TF_DIR:
+        type: string
+        default: .
+        description: Terraform Directory
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+jobs:
+## repo creation job
+  repo_creation_job:
+    runs-on: ubuntu-latest
+    steps:
+    - name: repo_checkout
+      uses: actions/checkout@v3
+    
+    - name: repo_creation_script
+      run: bash github_repo.sh ${{inputs.REPO_NAME}}
+      working-directory: scripts
+    env:
+      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+
+      ## Terraform Job:
+## terraform job
+  terraform_resources_job:
+    needs: [repo_creation_job]
+    uses:  saiseerlamphasis/azuregitops/.github/workflows/terraform.yaml@main
+    with:
+      working_directory: ${{inputs.TF_DIR}}
+
+
+
+## Build job:
+  build_appcode_job:
+    needs: [repo_creation_job]
+    runs-on: ubuntu-latest
+    steps:
+    - name: build_appcode
+      run: echo "buildappcode"
+
+## Release job:
+
+  release_appcode_job:
+    needs: [repo_creation_job, build_appcode_job]
+    runs-on: ubuntu-latest
+    steps:
+    - name: release_appcode
+      run: echo "release app code"
+
