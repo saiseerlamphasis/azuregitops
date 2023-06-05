@@ -1,2 +1,2 @@
-resource_group="test1234"
-location="north europe"
+resource_group="seerla_gitops"
+location="Central US"

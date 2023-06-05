@@ -7,10 +7,10 @@ terraform {
   }
 
   backend "azurerm" {
-    subscription_id      = "7d36b290-05bd-4bc4-a670-89b4e4749eb3"
-    resource_group_name  = "vault-edu"
-    storage_account_name = "kglab02tfstate"
-    container_name       = "cda"
+    subscription_id      = "6e977b0d-998c-42d7-97ed-dd70040cff12"
+    resource_group_name  = "ahmedtm"
+    storage_account_name = "ahmedtm951b"
+    container_name       = "tfstategitops"
     key                  = "terraform.tfstate"
   }
 }
